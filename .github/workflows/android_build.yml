@@ -14,17 +14,22 @@ jobs:
           distribution: 'zulu'
           java-version: '17'
 
-      - name: Setup Node.js
+      # UPDATED: Now using Node 22 to fix the "incompatible module" error
+      - name: Setup Node.js (v22)
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: '22'
 
+      # Force install Yarn to ensure we have a compatible version available
+      - name: Install Yarn
+        run: npm install -g yarn
+
+      # Uses --ignore-scripts to prevent "husky" or "pod-install" crashes
       - name: Install Dependencies
         run: |
-          yarn install
+          yarn install --ignore-scripts --no-frozen-lockfile
 
       - name: Create Dummy Env File
-        # PocketPal might fail if .env is missing, so we make a fake one
         run: |
           echo "API_URL=http://localhost" > .env
 
